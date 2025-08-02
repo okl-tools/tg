@@ -1,5 +1,6 @@
 /clion-build/
 /build/
+/dep_pkg/
 /.idea/
 
 /.idea/vcs.xml
