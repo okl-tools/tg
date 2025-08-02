@@ -8,5 +8,6 @@
 *.elf
 *.o
 *.obj
+*.deb
 
 
