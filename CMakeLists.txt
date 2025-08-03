@@ -17,18 +17,18 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
-        Network   # 👈 HINZUGEFÜGT
+        Network
         REQUIRED)
 
 file(GLOB_RECURSE TOOL_SOURCES guiTools/*.cpp)
 
-add_executable(tg main.cpp WindowOCR.cpp WindowOCR_hello.cpp DesktopSelection.cpp DiaSelectLang.cpp ${TOOL_SOURCES})
+add_executable(tg main.cpp WindowOCR.cpp WindowOCR_hello.cpp DesktopShot.cpp DesktopShot_Wayland.cpp DiaSelectLang.cpp ${TOOL_SOURCES})
 
 target_link_libraries(tg
         Qt::Core
         Qt::Gui
         Qt::Widgets
-        Qt::Network   # 👈 HINZUGEFÜGT
+        Qt::Network
         tesseract
         lept
 )

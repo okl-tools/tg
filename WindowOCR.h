@@ -82,30 +82,3 @@ protected:
     void select_lang(const QString & sLang);
 };
 
-
-class DesktopSelection : public QWidget
-{
-    QPoint startPoint;
-    QRect  selectedRect;
-    bool   selecting = false;
-    QImage result;
-    QEventLoop loop;
-
-public:
-    DesktopSelection(QWidget* parent = nullptr);
-
-
-    static QImage run();
-
-protected:
-    void mousePressEvent(QMouseEvent* e) override;
-
-    void mouseMoveEvent(QMouseEvent* e) override;
-
-    void mouseReleaseEvent(QMouseEvent* e) override;
-
-    void paintEvent(QPaintEvent*) override;
-
-    void keyPressEvent(QKeyEvent* event);
-
-};

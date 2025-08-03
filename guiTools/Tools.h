@@ -78,6 +78,11 @@ namespace guiTools
 
 
 
+    bool detect_wayland();
+
+
+
+
     struct XPanel : public QFrame
     {
         XPanel ();
@@ -248,7 +253,7 @@ namespace guiTools
         qreal totalGridSize = 3000;
 
 
-        void draw (XPainter & painter);
+        void draw (XPainter & painter, qreal zoomFactor);
 
         bool is_enabled () const
         {

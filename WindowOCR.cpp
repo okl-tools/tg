@@ -1,5 +1,6 @@
 #include "WindowOCR.h"
 #include "DiaSelectLang.h"
+#include "DesktopShot.h"
 
 #include <QClipboard>
 #include <QImage>
@@ -197,6 +198,12 @@ void WindowOCR::ini ()
 
     setWindowTitle("tg - Tesseract GUI");
 
+    QShortcut * shortcut = new QShortcut(QKeySequence(Qt::Key_F1), this);
+    QObject::connect(shortcut, &QShortcut::activated, [this] ()
+    {
+        on_about();
+    });
+
     setup_hello();
 
 }
@@ -225,6 +232,11 @@ void WindowOCR::save_window_state ()
     settings.setValue("window/grid", cbGrid->isChecked());
     settings.setValue("window/lang", sLangCurr);
 
+    if (splitter)
+    {
+        settings.setValue("window/splitter", splitter->saveState());
+    }
+
     //if (cbGrid)
 }
 
@@ -249,6 +261,11 @@ void WindowOCR::restore_window_state ()
 
     select_lang(sLangCurr);
 
+    if (splitter)
+    {
+        splitter->restoreState(settings.value("window/splitter").toByteArray());
+    }
+
 
     window->resize(size);
     window->move(pos);
@@ -257,7 +274,7 @@ void WindowOCR::restore_window_state ()
 
 void WindowOCR::on_about ()
 {
-    QString s = "tg 2025 - v 0.20\n"
+    QString s = "tg 2025 - v 0.202\n"
                 "by Olaf Kliche (C) - Software Developer \n"
                 "Inspired by Tanya Kliche - Professional Linguist\n";
 
@@ -272,7 +289,19 @@ void WindowOCR::on_screen_shot ()
     hide();
     QApplication::processEvents();
 
-    QImage img = DesktopSelection::run();
+//    QImage img = DesktopShot::shotDesktopRectangle();
+    QImage img;
+
+    if (detect_wayland())
+    {
+        pp("WindowOCR::on_screen_shot - WAYLAND");
+        img = DesktopShot::shotDesktopRectangle_Wayland();
+    }
+    else
+    {
+        pp("WindowOCR::on_screen_shot - X11");
+        img = DesktopShot::shotDesktopRectangle();
+    }
 
     if (img.isNull())
     {

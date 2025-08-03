@@ -37,15 +37,34 @@ namespace guiTools
                       });
     }
 
+    enum class SESS_GUI
+    {
+        NOT_INITIALIZED,
+        X11,
+        WAYLAND
+    };
 
-//    static QMutex mutexLog;
-//
-//    void log(const QString & s)
-//    {
-//        QMutexLocker locker(&mutexLog);
-//
-////        cout << s.toStdString();
-//        cout << "\n";
-//    }
+
+    static SESS_GUI sessGui = SESS_GUI::NOT_INITIALIZED;
+
+    bool detect_wayland()
+    {
+        if (1)
+        {
+            return true;
+        }
+
+        if (sessGui != SESS_GUI::NOT_INITIALIZED)
+        {
+            return sessGui == SESS_GUI::WAYLAND;
+        }
+
+        const char* session = getenv("XDG_SESSION_TYPE");
+
+        sessGui = session && QString(session).compare("wayland", Qt::CaseInsensitive) == 0 ? SESS_GUI::WAYLAND : SESS_GUI::X11;
+
+        return sessGui == SESS_GUI::WAYLAND;
+
+    }
 
 }

@@ -34,7 +34,6 @@ namespace guiTools
 
         painter.save(); // for LW * overlay
 
-//        painter.setMatrix(matrixCartesian);
         painter.setTransform(matrixCartesian);
 
 
@@ -46,15 +45,11 @@ namespace guiTools
         {
             QImage imgTransformed = img.mirrored(false, true);
             painter.drawImage(-imgTransformed.width() / 2, -imgTransformed.height() / 2, imgTransformed);
-//            painter.drawImage(0,0, img);
         }
 
         if (flagControlRect)
         {
             painter.drawXRect(rMark, 3.0, Qt::yellow);
-
-            // QImage imgSub =
-
         }
 
         painter.save();
@@ -62,7 +57,7 @@ namespace guiTools
         painter.restore();
 
         painter.save();
-        grid.draw(painter);
+        grid.draw(painter, get_zoom());
         painter.restore();
 
         painter.restore();
@@ -184,9 +179,23 @@ namespace guiTools
 
     void XImageViewer::wheelEvent (QWheelEvent * event)
     {
-        on_zoom(event->pixelDelta().ry() > 0);
+       // on_zoom(event->pixelDelta().ry() > 0);
 
+        int delta = 0;
 
+        if (!event->pixelDelta().isNull())
+        {
+            delta = event->pixelDelta().ry();
+        }
+        else
+        {
+            delta = event->angleDelta().ry();
+        }
+
+        if (delta != 0)
+        {
+            on_zoom(delta > 0);
+        }
     }
 
     void XImageViewer::mousePressEvent (QMouseEvent * event)
@@ -398,6 +407,7 @@ namespace guiTools
 
     void XImageViewer::on_zoom (bool flagUp, bool flagCurrentMousePos)
     {
+        pp("XImageViewer::on_zoom");
 
         const QPoint pt = flagCurrentMousePos ?
                           getCurrentMousePos() :
@@ -424,9 +434,11 @@ namespace guiTools
         QMutexLocker locker(&mutexImage);
         image = img;
         delta.reset();
-        //update();
+        //matrixCartesian.reset();
 
-        on_fit();
+        update();
+
+//        on_fit();
 
     }
 

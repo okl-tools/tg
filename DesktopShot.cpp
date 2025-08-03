@@ -1,14 +1,20 @@
-#include "WindowOCR.h"
+// DesktopShot.cpp
 
-#include <QClipboard>
+#include "DesktopShot.h"
+
 #include <QImage>
-#include <QMimeData>
-#include <QSettings>
 #include <QMessageBox>
 #include <QTimer>
+#include <QScreen>
+#include <QMouseEvent>
 
+#include <QTemporaryFile>
+#include <QUrl>
+#include <QFile>
+#include <QStandardPaths>
+#include <QProcess>
 
-DesktopSelection::DesktopSelection (QWidget * parent) : QWidget(parent)
+DesktopShot::DesktopShot (QWidget * parent) : QWidget(parent)
 {
     // Virtual geometrie crossing all screens
     QRect virtualGeometry;
@@ -40,21 +46,23 @@ DesktopSelection::DesktopSelection (QWidget * parent) : QWidget(parent)
     grabMouse();
 }
 
-QImage DesktopSelection::run ()
+QImage DesktopShot::shotDesktopRectangle ()
 {
-    DesktopSelection* selector = new DesktopSelection();
+    pp("DesktopShot::shotDesktopRectangle");
+
+    DesktopShot* selector = new DesktopShot();
     selector->loop.exec();
     return selector->result;
 }
 
-void DesktopSelection::mousePressEvent (QMouseEvent * e)
+void DesktopShot::mousePressEvent (QMouseEvent * e)
 {
     startPoint = e->pos();
     selecting = true;
     selectedRect = QRect(startPoint, startPoint);
 }
 
-void DesktopSelection::mouseMoveEvent (QMouseEvent * e)
+void DesktopShot::mouseMoveEvent (QMouseEvent * e)
 {
     if (selecting)
     {
@@ -64,7 +72,7 @@ void DesktopSelection::mouseMoveEvent (QMouseEvent * e)
 }
 
 
-void DesktopSelection::mouseReleaseEvent(QMouseEvent* e)
+void DesktopShot::mouseReleaseEvent(QMouseEvent* e)
 {
     selecting = false;
     releaseMouse();
@@ -111,7 +119,7 @@ void DesktopSelection::mouseReleaseEvent(QMouseEvent* e)
 
 }
 
-void DesktopSelection::keyPressEvent(QKeyEvent* event)
+void DesktopShot::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Escape)
     {
@@ -129,7 +137,7 @@ void DesktopSelection::keyPressEvent(QKeyEvent* event)
 }
 
 
-void DesktopSelection::paintEvent (QPaintEvent *)
+void DesktopShot::paintEvent (QPaintEvent *)
 {
     QPainter p(this);
     p.fillRect(rect(), QColor(0, 0, 0, 100)); // halbtransparent
