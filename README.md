@@ -1,5 +1,8 @@
 # tg - Tesseract GUI
 
+
+![chin-text2.png](chin-text2.png)
+
 ### Tested Linux Distributions: 
 - Ubuntu 22.04, 
 - Ubuntu 24.04 
