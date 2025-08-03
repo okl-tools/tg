@@ -274,7 +274,7 @@ void WindowOCR::restore_window_state ()
 
 void WindowOCR::on_about ()
 {
-    QString s = "tg 2025 - v 0.202\n"
+    QString s = "tg 2025 - v 0.203\n"
                 "by Olaf Kliche (C) - Software Developer \n"
                 "Inspired by Tanya Kliche - Professional Linguist\n";
 
@@ -333,22 +333,22 @@ void WindowOCR::on_clear_text ()
 }
 
 
-QString autoDetectTessdataPath ()
-{
-    QString path = QString::fromLocal8Bit(qgetenv("TESSDATA_PREFIX"));
-
-#ifdef Q_OS_WIN
-    if (path.isEmpty())
-        path = "C:/Program Files/Tesseract-OCR/tessdata";
-#elif defined(Q_OS_UNIX)
-    if (path.isEmpty())
-    {
-        path = "/usr/share/tesseract-ocr/4.00/tessdata";
-    }
-#endif
-
-    return path;
-}
+//QString autoDetectTessdataPath ()
+//{
+//    QString path = QString::fromLocal8Bit(qgetenv("TESSDATA_PREFIX"));
+//
+//#ifdef Q_OS_WIN
+//    if (path.isEmpty())
+//        path = "C:/Program Files/Tesseract-OCR/tessdata";
+//#elif defined(Q_OS_UNIX)
+//    if (path.isEmpty())
+//    {
+//        path = "/usr/share/tesseract-ocr/4.00/tessdata";
+//    }
+//#endif
+//
+//    return path;
+//}
 
 QStringList list_languages (const QString & tessdataDir)
 {
@@ -365,33 +365,7 @@ QStringList list_languages (const QString & tessdataDir)
     return langs;
 }
 
-void WindowOCR::on_show_lang ()
-{
-    pp("WindowOCR::on_show_lang");
 
-    QString sDir = autoDetectTessdataPath();
-    QStringList list = list_languages(sDir);
-    if (list.empty())
-    {
-
-    }
-    else
-    {
-        QString s = QString::asprintf("Installed tesseract languages:%d\n", (int) list.size());
-        s += "\n";
-
-        for (auto l: list)
-        {
-            s += l;
-            s += "\n";
-        }
-        s += "\n";
-        s += "can be combinead with + \n";
-        s += "'chi_sim+eng' for example  \n";
-
-        QMessageBox::information(this, "Languages", s);
-    }
-}
 
 void WindowOCR::select_lang (const QString & sLang)
 {

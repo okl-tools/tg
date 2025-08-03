@@ -1,3 +1,23 @@
 # tg - Tesseract GUI
-## C++ 20, Qt6, tesseract libs
+
+### Linux: Ubuntu 22.04, Ubuntu 24.04, Debian 6.1.128-1 
+
+### written in C++ 20, make use of Qt6 and tesseract libs
+
+
+### dependencies
+- tesseract 
+- tesseract libs
+- qt6 libs
+- g++ compiler 11.4 or higher
+- cmake 3.10 or higher
+
+
+### apt-get
+
+- sudo apt install qt6-base-dev
+- sudo apt install tesseract-ocr
+- sudo apt install tesseract-ocr-deu tesseract-ocr-eng
+- sudo apt install tesseract-ocr-chi-sim
+- sudo apt install tesseract-ocr-jpn
 

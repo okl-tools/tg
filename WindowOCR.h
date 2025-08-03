@@ -76,7 +76,6 @@ protected:
     void on_clear_text ();
 
     void setup_hello();
-    void on_show_lang ();
     void on_sel_lang ();
 
     void select_lang(const QString & sLang);

@@ -1,4 +1,7 @@
 #include "DiaSelectLang.h"
+#include "guiTools/pp.h"
+
+using namespace okl;
 
 DiaSelectLang::DiaSelectLang (QWidget * parent, const QString & sLangCurr) : QDialog(parent)
 {
@@ -66,6 +69,15 @@ QString DiaSelectLang::autoDetectTessdataPath ()
     if (path.isEmpty())
     {
         path = "/usr/share/tesseract-ocr/4.00/tessdata";
+        if (!QDir(path).exists())
+        {
+            path = "/usr/share/tesseract-ocr/5/tessdata";
+        }
+        if (!QDir(path).exists())
+        {
+            pp("DiaSelectLang::autoDetectTessdataPath, problems to detect 'tessdata' folder");
+            pp(4, "expected /usr/share/tesseract-ocr/5/tessdata or /usr/share/tesseract-ocr/4.00/tessdata");
+        }
     }
 #endif
 
@@ -78,7 +90,7 @@ QStringList DiaSelectLang::list_languages (const QString & tessdataDir)
 
     if (!dir.exists())
     {
-        qWarning() << "tessdata directory not found:" << tessdataDir;
+        pp("DiaSelectLang::list_languages, tessdata directory <<<$>>> not found:", tessdataDir);
         return {};
     }
 
