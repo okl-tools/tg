@@ -3,6 +3,8 @@
 
 ![chin-text2.png](chin-text2.png)
 
+### tg is an OCR program which extracts text from screenshots or scanned pages
+
 ### Tested Linux Distributions: 
 - Ubuntu 22.04, 
 - Ubuntu 24.04 
