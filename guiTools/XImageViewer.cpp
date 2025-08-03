@@ -434,12 +434,9 @@ namespace guiTools
         QMutexLocker locker(&mutexImage);
         image = img;
         delta.reset();
-        //matrixCartesian.reset();
+        flagControlRect = false;
 
         update();
-
-//        on_fit();
-
     }
 
     QImage XImageViewer::get_image () const

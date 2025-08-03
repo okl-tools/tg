@@ -325,6 +325,7 @@ void WindowOCR::on_screen_shot ()
 void WindowOCR::on_clear_image ()
 {
     compoImage->set_image(QImage());
+
 }
 
 void WindowOCR::on_clear_text ()
