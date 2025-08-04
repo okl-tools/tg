@@ -39,6 +39,7 @@ struct WindowOCR : XMainWindow
     QPlainTextEdit * editor = nullptr;
 
     QPushButton * btExtract = nullptr;
+    QPushButton * btExtractAppend = nullptr;
     QCheckBox * cbGrid = nullptr;
     QComboBox * comboLang = nullptr;
 
@@ -79,5 +80,8 @@ protected:
     void on_sel_lang ();
 
     void select_lang(const QString & sLang);
+
+    bool flagWelcomeText = true;
+    void on_help ();
 };
 

@@ -209,6 +209,7 @@ namespace guiTools
         void drawXLine (QPointF pt1, QPointF pt2, qreal w = 1.0, QColor col = Qt::black, Qt::PenStyle style = Qt::SolidLine);
         void drawXLine (qreal x1, qreal y1, qreal x2, qreal y2, qreal w = 1.0, QColor col = Qt::black, Qt::PenStyle style = Qt::SolidLine);
         void drawXRect (const QRectF & r, qreal w = 1.0, QColor col = Qt::black, Qt::PenStyle style = Qt::SolidLine);
+        void fillXRect (const QRectF & r, QColor col = Qt::green);
         void fillCircle (QPointF pt, qreal radius, QColor colBorder = Qt::black, qreal lineWidth = 1, QColor colFill = Qt::yellow);
         void setAntiAlias (bool flagOn = true);
     };

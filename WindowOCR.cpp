@@ -19,6 +19,12 @@ void WindowOCR::on_extract (EXT ext)
         pp("main::on_extract, rect:$", compoImage->rCut);
     }
 
+    if (flagWelcomeText)
+    {
+        flagWelcomeText = false;
+        editor->setPlainText("");
+    }
+
 
     QImage img = compoImage->get_selection();
     if (img.isNull())
@@ -39,6 +45,7 @@ void WindowOCR::on_extract (EXT ext)
     exec_thread([this, s, ext] ()
                 {
                     btExtract->setEnabled(false);
+                    btExtractAppend->setEnabled(false);
 
 
                     api.SetImage(pixRead(s.toUtf8().constData()));
@@ -60,6 +67,7 @@ void WindowOCR::on_extract (EXT ext)
                     exec_gui_method([sText, this, ext]
                                     {
                                         btExtract->setEnabled(true);
+                                        btExtractAppend->setEnabled(true);
                                         if (ext == EXT::REPLACE)
                                         {
                                             editor->setPlainText(sText);
@@ -129,7 +137,7 @@ void WindowOCR::ini ()
     panButtons->set_margins(0);
 
     cbGrid = panButtons->create<QCheckBox>();
-    cbGrid->setText("grid");
+    cbGrid->setText("Grid");
     cbGrid->setChecked(true);
 
 //
@@ -140,31 +148,31 @@ void WindowOCR::ini ()
         compoImage->update();
     });
 
-    panButtons->create_button("fit", "Resize image that it fits", [this]
+    panButtons->create_button("&Fit", "Resize image that it fits", [this]
     {
         compoImage->on_fit();
     });
 
-    panButtons->create_button("&paste", "Paste image from clipboard", [this]
+    panButtons->create_button("&Paste", "Paste image from clipboard", [this]
     {
         on_paste();
     });
-    panButtons->create_button("&clear", "Clear image", [this]
+    panButtons->create_button("&Clear", "Clear image", [this]
     {
         on_clear_image();
     });
 
-    panButtons->create_button("&screenshot", "Start screenshot ...", [this]
+    panButtons->create_button("&Screenshot", "Start screenshot ...", [this]
     {
         on_screen_shot();
     });
 
 
-    btExtract = panButtons->create_button("&extract", "Extract text and replace", [this]
+    btExtract = panButtons->create_button("&Extract", "Extract text and replace", [this]
     {
         on_extract(EXT::REPLACE);
     });
-    btExtract = panButtons->create_button("extract/&append", "Extract text and append", [this]
+    btExtractAppend = panButtons->create_button("Extract/Appen&d", "Extract text and append", [this]
     {
         on_extract(EXT::APPEND);
     });
@@ -181,27 +189,35 @@ void WindowOCR::ini ()
     edLang->setReadOnly(true);
 
 
-    panButtons->create_button("select language", "Select language", [this]
+    panButtons->create_button("Select &Language", "Select language", [this]
     {
         on_sel_lang();
     });
 
-    panButtons->create_button("&clear", "Clears all text", [this]
+    panButtons->create_button("Clea&r", "Clears all text", [this]
     {
         on_clear_text();
     });
 
-    panButtons->create_button("&about", "", [this]
+    panButtons->create_button("&About", "", [this]
     {
         on_about();
     });
+
+    QPushButton * btHelp = panButtons->create_button("?", "", [this]
+    {
+        on_help();
+    });
+
+//    btHelp->setContentsMargins(0,0,0,0);
+    btHelp->setMaximumWidth(30);
 
     setWindowTitle("tg - Tesseract GUI");
 
     QShortcut * shortcut = new QShortcut(QKeySequence(Qt::Key_F1), this);
     QObject::connect(shortcut, &QShortcut::activated, [this] ()
     {
-        on_about();
+        on_help();
     });
 
     setup_hello();
@@ -274,7 +290,7 @@ void WindowOCR::restore_window_state ()
 
 void WindowOCR::on_about ()
 {
-    QString s = "tg 2025 - v 0.203\n"
+    QString s = "tg 2025 - v 0.204\n"
                 "by Olaf Kliche (C) - Software Developer \n"
                 "Inspired by Tanya Kliche - Professional Linguist\n";
 
@@ -286,6 +302,13 @@ void WindowOCR::on_about ()
 void WindowOCR::on_screen_shot ()
 {
     pp("WindowOCR::on_screen_shot");
+
+    if (flagWelcomeText)
+    {
+        flagWelcomeText = false;
+        editor->setPlainText("");
+    }
+
     hide();
     QApplication::processEvents();
 

@@ -28,8 +28,6 @@ namespace guiTools
         painter.setRenderHint(QPainter::Antialiasing);
 
         QRect r(0, 0, w - 1, h - 1);
-//        painter.fillRect(r, Qt::white);
-//        painter.fillRect(r, QColor("#31363b"));
         painter.fillRect(r, Qt::white);
 
         painter.save(); // for LW * overlay
@@ -49,7 +47,8 @@ namespace guiTools
 
         if (flagControlRect)
         {
-            painter.drawXRect(rMark, 3.0, Qt::yellow);
+            painter.drawXRect(rMark, 1.0, Qt::black);
+            painter.fillXRect(rMark, QColor(255,0,0, 70));
         }
 
         painter.save();

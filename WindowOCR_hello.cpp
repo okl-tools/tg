@@ -8,8 +8,7 @@
 #include <QMessageBox>
 #include <QDir>
 
-
-void WindowOCR::setup_hello ()
+static QString get_help_text()
 {
     QString s = "Welcome to tg - Tesseract GUI\n"
                 "\n"
@@ -43,12 +42,24 @@ void WindowOCR::setup_hello ()
                 "sudo apt install tesseract-ocr-fra  (French)\n"
                 "sudo apt install tesseract-ocr-chi-sim  (Chinese Simplified)\n"
                 "sudo apt install tesseract-ocr-chi-tra  (Chinese Traditional)\n"
-                "sudo apt install tesseract-ocr-jap  (Japanese)\n"
+                "sudo apt install tesseract-ocr-jpn  (Japanese)\n"
                 " \n"
                 "See all language packages:\n"
                 " https://github.com/tesseract-ocr/tessdoc/blob/main/Data-Files-in-different-versions.md\n"
                 "\n";
 
-    editor->setPlainText(s);
+    return s;
+}
+
+
+void WindowOCR::setup_hello ()
+{
+    editor->setPlainText(get_help_text());
+
+}
+
+void WindowOCR::on_help ()
+{
+    QMessageBox::information(this, "Help", get_help_text());
 
 }

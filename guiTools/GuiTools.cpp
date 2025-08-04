@@ -49,10 +49,10 @@ namespace guiTools
 
     bool detect_wayland()
     {
-        if (1)
-        {
-            return true;
-        }
+//        if (1)
+//        {
+//            return true;
+//        }
 
         if (sessGui != SESS_GUI::NOT_INITIALIZED)
         {

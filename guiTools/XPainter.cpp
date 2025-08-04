@@ -9,6 +9,11 @@ namespace guiTools
 
     }
 
+    void XPainter::fillXRect (const QRectF & r, QColor col )
+    {
+        QPainter::fillRect(r, col);
+    }
+
     void XPainter::drawXRect(const QRectF & r, qreal w, QColor col, Qt::PenStyle style)
     {
         save();
