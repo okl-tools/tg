@@ -1,6 +1,13 @@
 #pragma once
 
-
+// pp - power print, mini logger
+// pp("width:$, height:$", w, h);
+//
+// $ is the placeholder for all kind of objects
+// $ is type save
+//
+// (C) Olaf Kliche
+// -----------------------------------------------------------
 
 #include <string>
 #include <cstring>
@@ -11,6 +18,7 @@
 #include <thread>
 #include <stdarg.h>
 #include <chrono>
+
 #include <QString>
 #include <QPoint>
 #include <QRect>
@@ -56,7 +64,6 @@ namespace okl
     void pp_set_thread_ID_main();
 
     void xSleep(unsigned long long milliSeconds);
-
 
     void exitMessage (int exitCode, const char * pFormat); // cout message and wait 5 sec before exit
 

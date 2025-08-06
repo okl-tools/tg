@@ -1,21 +1,16 @@
 #pragma once
 
+#include <QMainWindow>
+#include <QLayout>
 #include <QPushButton>
 #include <QLabel>
-#include <QMainWindow>
 #include <QFrame>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTransform>
-#include <QVector2D>
 #include <QPainter>
-#include <QShortcut>
 #include <QString>
 #include <QTextStream>
 #include <QMutex>
 #include <QSize>
-#include <qglobal.h>
-#include <string>
+
 #include <functional>
 
 #include "pp.h"
@@ -23,18 +18,17 @@
 
 void nullPointerHandling (const char * pFile, int line, const QString & m);
 
+// FAST FAIL null pointer checking
 #define NCHECK(pointer) \
     if (pointer==nullptr) nullPointerHandling((__FILE__),(__LINE__),(#pointer " == NULL"))
 
 
-using namespace okl;
+
+using namespace okl; // for pp(...) - power print, small logging tool
 
 
 namespace guiTools
 {
-    template<typename T> using XArray = std::vector<T>;     // template alias "XArray" because of name collision std::vector <=> "gen::Vector*"
-
-
     enum class GrowPolicy
     {
         growNot, growVert, growHorz, growAll
@@ -72,16 +66,17 @@ namespace guiTools
         return qwt;
     }
 
-    using MILLI     = uint64_t; // milliseconds
+    using MILLI  = uint64_t; // milliseconds
 
-    void exec_thread(std::function<void()> f);
 
+    void exec_thread(std::function<void()> f); // execute a function with an other thread of QThreadPool
 
 
     bool detect_wayland();
 
-
-
+    QImage shotDesktopRectangle();
+//    QImage shotDesktopRectangle_X11();
+//    QImage shotDesktopRectangle_Wayland();
 
     struct XPanel : public QFrame
     {
@@ -137,11 +132,9 @@ namespace guiTools
             add(component, growPolicy);
 //
             return component;
-//            return nullptr;
         }
 
         bool containsWidget (QWidget * w) const;
-
 
         QLabel * createSpacer (GrowPolicy growPolicy = GrowPolicy::growAll);
 
@@ -174,14 +167,12 @@ namespace guiTools
     protected:
 
         XPanel * panMain = nullptr; // Content => setCentralWidget(...)
-
     };
 
 
     struct XMatrix : public QTransform
     {
         using QTransform::QTransform;
-
 
         XMatrix & translate (const QVector2D & v);
         XMatrix & translate (const QPointF & v);
@@ -195,14 +186,11 @@ namespace guiTools
         double get_scale_y () const;
 
         QVector2D get_translation () const;
-
-
     };
 
 
     struct XPainter : public QPainter
     {
-
         XPainter (QPaintDevice *);
 
         void drawCircle (QPointF pt, qreal radius, QColor col = Qt::black);
@@ -222,7 +210,6 @@ namespace guiTools
             DELTA_VERTICAL = 1, DELTA_HORIZONTAL = 2, DELTA_ALL = 4,
         };
 
-//        XMouseDelta ();
 
         // complete delta from drag beginning (ptStart)
         int dx=0;
@@ -248,92 +235,5 @@ namespace guiTools
         bool flagValid;
     };
 
-    struct XGrid
-    {
-        qreal gridSize = 100;
-        qreal totalGridSize = 3000;
-
-
-        void draw (XPainter & painter, qreal zoomFactor);
-
-        bool is_enabled () const
-        {
-            return flagEnabled;
-        }
-
-        void set_enabled (bool flagEnabled)
-        {
-            XGrid::flagEnabled = flagEnabled;
-        }
-
-    protected:
-        bool flagEnabled = true;
-
-    };
-
-
-    struct XImageViewer : public QWidget
-    {
-        XImageViewer ();
-
-        bool load_image (const QString & sPath);
-
-        void set_image(QImage img);
-        QImage get_image() const;
-        void on_fit();
-        QImage get_selection() ;
-
-        bool flagControlRect = false;
-        QRectF rMark; // karthesian
-        QRect rCut; // image
-
-        XMouseDelta delta;
-
-        XGrid grid;
-
-
-    protected:
-
-        void paintEvent (QPaintEvent * event) override;
-
-        void dragEnterEvent (QDragEnterEvent * event) override;
-        void dropEvent (QDropEvent * event) override;
-
-        void wheelEvent (QWheelEvent * event) override;
-
-        void mousePressEvent (QMouseEvent * event) override;
-        void mouseReleaseEvent (QMouseEvent * event) override;
-        void mouseMoveEvent (QMouseEvent * event) override;
-
-        void resizeEvent (QResizeEvent * event) override;
-        void on_resize(QSize sz);
-        void on_zoom(bool up, bool flagCurrentMousePos=true); // flagCurrentMousePos:false means middle of window
-
-        QPoint getCurrentMousePos() const;
-        QPoint mid_point_of_view() const;
-
-        QPointF current_point_from_cartesian() const;
-        QPointF point_from_cartesian(QPointF pt)  const;
-        QVector2D vector_from_cartesian(QPointF pt)  const;
-
-        QSize get_image_size() const;
-
-        QPoint point_from_image(QPoint pt) const;
-
-        double get_zoom() const;
-        QVector2D get_translation() const;
-
-
-        XMatrix matrixCartesian;
-
-        QVector2D v1;
-        QVector2D v2;
-        QVector2D vTranslate;
-
-
-        mutable QMutex mutexImage;
-        QImage image; // QImage::Format_RGB32
-
-    };
 
 }

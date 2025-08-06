@@ -82,17 +82,9 @@ int main (int argc, char * argv[])
     }
 
 
-    WindowOCR tw;
+    WindowOCR winOCR;
 
-//    if (tw.api.Init(NULL, "chi_sim+eng") != 0)
-//    {
-//        pp("Could not initialize tesseract.");
-//        return 1;
-//    }
-
-
-    tw.ini();
-
+    winOCR.ini();
 
     QString sFile;
     QImage img;
@@ -110,7 +102,7 @@ int main (int argc, char * argv[])
         else
         {
             pp("XImageViewer::load_image, image '$' load, $x$", sFile, img.width(), img.height());
-            tw.compoImage->set_image(img);
+            winOCR.compoImage->set_image(img);
         }
     }
 
@@ -119,16 +111,16 @@ int main (int argc, char * argv[])
         pp("tg, sFile argument '$'", sFile);
     }
 
-    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&tw] ()
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&winOCR] ()
     {
         pp("main::main - quit");
-        tw.api.End();
+        winOCR.api.End();
     });
 
 
-    tw.resize(1200, 800);
-    tw.restore_window_state();
-    tw.show();
+    winOCR.resize(1200, 800);
+    winOCR.restore_window_state();
+    winOCR.show();
 
     return QApplication::exec();
 }

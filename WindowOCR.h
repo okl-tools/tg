@@ -23,6 +23,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QLineEdit>
+#include "guiTools/XImageViewer.h"
 
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
@@ -46,7 +47,6 @@ struct WindowOCR : XMainWindow
     QLineEdit * edLang = nullptr;
 
     tesseract::TessBaseAPI api;
-
 
     void ini ();
 

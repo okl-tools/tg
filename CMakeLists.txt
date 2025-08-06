@@ -22,7 +22,7 @@ find_package(Qt6 COMPONENTS
 
 file(GLOB_RECURSE TOOL_SOURCES guiTools/*.cpp)
 
-add_executable(tg main.cpp WindowOCR.cpp WindowOCR_hello.cpp DesktopShot.cpp DesktopShot_Wayland.cpp DiaSelectLang.cpp ${TOOL_SOURCES})
+add_executable(tg main.cpp WindowOCR.cpp WindowOCR_hello.cpp DiaSelectLang.cpp ${TOOL_SOURCES})
 
 target_link_libraries(tg
         Qt::Core

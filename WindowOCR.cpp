@@ -1,6 +1,5 @@
 #include "WindowOCR.h"
 #include "DiaSelectLang.h"
-#include "DesktopShot.h"
 
 #include <QClipboard>
 #include <QImage>
@@ -8,6 +7,7 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QDir>
+#include <QShortcut>
 
 
 void WindowOCR::on_extract (EXT ext)
@@ -144,7 +144,7 @@ void WindowOCR::ini ()
 
     QObject::connect(cbGrid, &QCheckBox::stateChanged, [this] (int state)
     {
-        compoImage->grid.set_enabled(state == Qt::Checked);
+        compoImage->set_grid_enabled(state == Qt::Checked);
         compoImage->update();
     });
 
@@ -267,7 +267,7 @@ void WindowOCR::restore_window_state ()
 
     bool flag = settings.value("window/grid", true).toBool();
     cbGrid->setChecked(flag);
-    compoImage->grid.set_enabled(flag);
+    compoImage->set_grid_enabled(flag);
 
     sLangCurr = settings.value("window/lang", QString("eng")).toString();
 
@@ -290,7 +290,7 @@ void WindowOCR::restore_window_state ()
 
 void WindowOCR::on_about ()
 {
-    QString s = "tg 2025 - v 0.204\n"
+    QString s = "tg 2025 - v 0.205\n"
                 "by Olaf Kliche (C) - Software Developer \n"
                 "Inspired by Tanya Kliche - Professional Linguist\n";
 
@@ -312,19 +312,7 @@ void WindowOCR::on_screen_shot ()
     hide();
     QApplication::processEvents();
 
-//    QImage img = DesktopShot::shotDesktopRectangle();
-    QImage img;
-
-    if (detect_wayland())
-    {
-        pp("WindowOCR::on_screen_shot - WAYLAND");
-        img = DesktopShot::shotDesktopRectangle_Wayland();
-    }
-    else
-    {
-        pp("WindowOCR::on_screen_shot - X11");
-        img = DesktopShot::shotDesktopRectangle();
-    }
+    QImage img = shotDesktopRectangle();
 
     if (img.isNull())
     {
@@ -335,10 +323,9 @@ void WindowOCR::on_screen_shot ()
         compoImage->set_image(img);
     }
 
-    // Fenster anzeigen
     show();
 
-    // Optional: in den Vordergrund zwingen
+    // force to be in foreground
     raise();
     activateWindow();
 
@@ -354,39 +341,6 @@ void WindowOCR::on_clear_image ()
 void WindowOCR::on_clear_text ()
 {
     editor->setPlainText("");
-}
-
-
-//QString autoDetectTessdataPath ()
-//{
-//    QString path = QString::fromLocal8Bit(qgetenv("TESSDATA_PREFIX"));
-//
-//#ifdef Q_OS_WIN
-//    if (path.isEmpty())
-//        path = "C:/Program Files/Tesseract-OCR/tessdata";
-//#elif defined(Q_OS_UNIX)
-//    if (path.isEmpty())
-//    {
-//        path = "/usr/share/tesseract-ocr/4.00/tessdata";
-//    }
-//#endif
-//
-//    return path;
-//}
-
-QStringList list_languages (const QString & tessdataDir)
-{
-    QStringList langs;
-    QDir dir(tessdataDir);
-
-    for (const QString & file: dir.entryList(QStringList("*.traineddata")))
-    {
-        QString lang = file.section('.', 0, 0); // vor ".traineddata"
-        pp("lang: <<<$>>>", lang);
-        langs << lang;
-    }
-
-    return langs;
 }
 
 
@@ -408,11 +362,8 @@ void WindowOCR::select_lang (const QString & sLang)
                             pp("WindowOCR::select_lang, could not initialize tesseract with lang <<<$>>>", sLang);
                             return;
                         }
-
                         sLangCurr = sLang;
-
                         edLang->setText(sLangCurr);
-
                     }, 500);
 
 

@@ -1,4 +1,7 @@
-#include "Tools.h"
+//#include "Tools.h"
+#include "XImageViewer.h"
+
+
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDragLeaveEvent>
@@ -11,18 +14,22 @@ using namespace okl;
 
 namespace guiTools
 {
+    template<typename T>
+    using XArray = std::vector<T>;     // template alias "XArray" because I think std::vector can be often mixed up with geometrical vectors
+
     XImageViewer::XImageViewer ()
     {
         setMouseTracking(true);
         setAcceptDrops(true);
     }
 
+
     void XImageViewer::paintEvent (QPaintEvent * event)
     {
-        pp("XImageViewer::paintEvent");
-
         const int w = width();
         const int h = height();
+
+        pp("XImageViewer::paintEvent, w:$, h:$", w, h);
 
         XPainter painter (this);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -52,21 +59,43 @@ namespace guiTools
         }
 
         painter.save();
-        //draw_contents(painter);
         painter.restore();
 
         painter.save();
-        grid.draw(painter, get_zoom());
+        draw_grid(painter, get_zoom());
         painter.restore();
 
         painter.restore();
 
     }
 
+    void XImageViewer::draw_grid(XPainter & painter, qreal zoomFactor)
+    {
+        if (!is_grid_enabled())
+            return;
+
+        QColor col = QColor(222,222,222);
+        qreal w = 1.0 / zoomFactor;
+
+        for (qreal x=0; x < totalGridSize; x+= gridSize)
+        {
+            painter.drawXLine(x, -totalGridSize, x, totalGridSize, w, col);
+            painter.drawXLine(-x, -totalGridSize, -x, totalGridSize, w, col);
+        }
+
+        for (qreal y=0; y < totalGridSize; y+= gridSize)
+        {
+            painter.drawXLine(-totalGridSize, y, totalGridSize, y, w, col);
+            painter.drawXLine(-totalGridSize, -y, totalGridSize, -y, w, col);
+        }
+
+        painter.drawXLine(-totalGridSize, 0, totalGridSize, 0, w*2, col);
+        painter.drawXLine(0, -totalGridSize, 0, totalGridSize, w*2,  col);
+    }
+
     void XImageViewer::dragEnterEvent (QDragEnterEvent * event)
     {
         pp("XImageViewer::dragEnterEvent");
-        //QWidget::dragEnterEvent(event);
 
         const QMimeData * md = event->mimeData();
         if (md == nullptr)
@@ -79,7 +108,6 @@ namespace guiTools
         pp(4, "Formats:$", listFormats.size());
         for (auto format: listFormats)
         {
-//            pp(8, "format:'$'", format.toStdString());
             pp(8, "format:'$'", format);
         }
 
@@ -92,7 +120,6 @@ namespace guiTools
     void XImageViewer::dropEvent (QDropEvent * event)
     {
         pp("XImageViewer::dropEvent");
-        //QWidget::dropEvent(event);
 
         if (!event)
         {
@@ -178,8 +205,6 @@ namespace guiTools
 
     void XImageViewer::wheelEvent (QWheelEvent * event)
     {
-       // on_zoom(event->pixelDelta().ry() > 0);
-
         int delta = 0;
 
         if (!event->pixelDelta().isNull())
@@ -200,7 +225,6 @@ namespace guiTools
     void XImageViewer::mousePressEvent (QMouseEvent * event)
     {
         pp("XImageViewer::mousePressEvent, at:$", event->pos());
-        //QWidget::mousePressEvent(event);
         delta.reset();
 
         if (event->modifiers() & Qt::ControlModifier)
@@ -228,41 +252,23 @@ namespace guiTools
 
     void XImageViewer::mouseReleaseEvent (QMouseEvent * event)
     {
-        //QWidget::mouseReleaseEvent(event);
-
-//        QPointF pt = point_from_image(event->position().toPoint());
         rCut.setBottomRight(point_from_image(event->position().toPoint()));
 
         pp("rCut:$", rCut);
 
         delta.fromPoint(event->pos());
 
-//            vTranslate = vTranslate + QVector2D(delta.dx/zoom, delta.dy/zoom);
         vTranslate = vTranslate + QVector2D(delta.dx, delta.dy);
 
         delta.reset();
-
-//        if (!(event->modifiers() & Qt::ControlModifier))
-//        {
-//            flagControlRect = false;
-//        }
-
 
         update();
     }
 
     void XImageViewer::mouseMoveEvent (QMouseEvent * event)
     {
-
-//        QPointF pt = current_point_from_cartesian();
-        QPointF pt = point_from_image(event->position().toPoint());
-//        pp("XImageViewer::mouseMoveEvent, pt:$", pt);
-
-
         if (event->buttons() == Qt::LeftButton)
         {
-
-
             delta.fromPoint(event->pos());
 
             QVector2D vTrans(delta.dxLast, -delta.dyLast);
@@ -271,24 +277,18 @@ namespace guiTools
 
             if (flagControlRect)
             {
-                pp("da rect ....");
-
                 if (event->modifiers() & Qt::ControlModifier)
                 {
                     QPointF pt = current_point_from_cartesian();
                     rMark.setBottomRight(pt);
 
                     rCut.setBottomRight(event->position().toPoint());
-                    pp("rCut:$", rCut);
-
-
+                    pp("XImageViewer::mouseMoveEvent, rCut:$", rCut);
                 }
-
             }
             else
             {
                 matrixCartesian.translate(vTrans);
-
             }
             update();
         }
@@ -363,14 +363,9 @@ namespace guiTools
             return { 0, 0 };
         }
 
-        // 1. Von Widget-Koordinaten → kartesisches Koordinatensystem
         QTransform inv = matrixCartesian.inverted();
         QPointF ptScene = inv.map(QPointF(pt));
-
-        // 2. Von kartesisch (0,0 = Mitte) → Bildkoordinaten (0,0 = oben links)
         QPointF ptImage = ptScene + QPointF(img.width() / 2.0, img.height() / 2.0);
-
-        // 3. Y-Achse spiegeln (da image.mirrored(false, true) verwendet wird)
         ptImage.setY(img.height() - ptImage.y());
 
         return ptImage.toPoint();
@@ -399,7 +394,6 @@ namespace guiTools
 
     QVector2D XImageViewer::vector_from_cartesian (QPointF pt) const
     {
-//        QPoint
         return QVector2D(point_from_cartesian(pt));
     }
 
@@ -458,6 +452,15 @@ namespace guiTools
         return image.copy();  // fallback: ganzes Bild
     }
 
+    void XImageViewer::set_grid_enabled (bool flagEnable)
+    {
+        flagEnabledGrid = flagEnable;
+    }
+
+    bool XImageViewer::is_grid_enabled () const
+    {
+        return flagEnabledGrid;
+    }
 
 
 }

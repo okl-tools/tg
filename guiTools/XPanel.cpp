@@ -1,6 +1,9 @@
 #include "Tools.h"
 #include <iostream>
 
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
 
 
 namespace guiTools

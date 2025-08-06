@@ -1,6 +1,13 @@
 #include "DiaSelectLang.h"
 #include "guiTools/pp.h"
 
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QDir>
+#include <QDialogButtonBox>
+
+
+
 using namespace okl;
 
 DiaSelectLang::DiaSelectLang (QWidget * parent, const QString & sLangCurr) : QDialog(parent)
@@ -25,11 +32,11 @@ DiaSelectLang::DiaSelectLang (QWidget * parent, const QString & sLangCurr) : QDi
         item->setCheckState(parts.contains(lang) ? Qt::Checked : Qt::Unchecked);
     }
 
-    auto * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    auto * layout = new QVBoxLayout(this);
+    QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addWidget(listWidget);
     layout->addWidget(buttonBox);
     setLayout(layout);

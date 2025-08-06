@@ -1,7 +1,10 @@
 #include "Tools.h"
+
 #include <QApplication>
 #include <QThread>
 #include <QTimer>
+#include <QShortcut>
+
 #include <iostream>
 
 
